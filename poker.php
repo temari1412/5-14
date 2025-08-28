@@ -41,7 +41,7 @@
             $royal = [1, 10, 11, 12, 13];
             sort($numbers);
             if ($isFlush && $numbers === $royal) {
-                $this->judge = "Royal Straight Flus";
+                $this->judge = "Royal Straight Flush";
             } elseif ($isFlush && $isStraight) {
                 $this->judge = "Straight Flush";
             } elseif (in_array(4, $counts)) {
@@ -55,7 +55,7 @@
             } elseif (in_array(3, $counts)) {
                 $this->judge = "Three Card";
             } elseif (count(array_keys($counts, 2)) === 2) {
-                $this->judge = "Two Pai";
+                $this->judge = "Two Pair";
             } elseif (in_array(2, $counts)) {
                 $this->judge = "One Pair";
             } else {
@@ -83,14 +83,14 @@
     
         private function isStraight($numbers) {
             sort($numbers);
-            // A,2,3,4,5 の特例（1を14と考えたAハイはロイヤルで別処理済み）
             if ($numbers === [1, 2, 3, 4, 5]) return true;
-    
+            if ($numbers === [1, 10, 11, 12, 13]) return true; // Aハイストレートの追加
+            
             for ($i = 0; $i < 4; $i++) {
                 if ($numbers[$i + 1] - $numbers[$i] !== 1) return false;
             }
             return true;
         }
-    }
+        
 ?>
     
