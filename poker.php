@@ -24,41 +24,45 @@
     
         public function setPokerHandJudge() {
             $sorted = $this->cardSort($this->card);
-    
+        
             if (!$this->fraudJudge($sorted)) {
-                $this->judge = "不正なカードの組み合わせです";
+                $this->judge = "Illegal hand";
                 return;
             }
-    
+        
             $numbers = array_column($sorted, 'number');
             $suits = array_column($sorted, 'suit');
-    
+        
             $counts = array_count_values($numbers);
             $isFlush = count(array_unique($suits)) === 1;
             $isStraight = $this->isStraight($numbers);
-    
-            if ($isFlush && $isStraight && max($numbers) === 13 && min($numbers) === 9) {
-                $this->judge = "ロイヤルストレートフラッシュ";
+        
+            // ロイヤルストレートフラッシュ: 10, J, Q, K, A (10-11-12-13-1)
+            $royal = [1, 10, 11, 12, 13];
+            sort($numbers);
+            if ($isFlush && $numbers === $royal) {
+                $this->judge = "Royal Straight Flus";
             } elseif ($isFlush && $isStraight) {
-                $this->judge = "ストレートフラッシュ";
+                $this->judge = "Straight Flush";
             } elseif (in_array(4, $counts)) {
-                $this->judge = "フォーカード";
+                $this->judge = "Four Card";
             } elseif (in_array(3, $counts) && in_array(2, $counts)) {
-                $this->judge = "フルハウス";
+                $this->judge = "Full House";
             } elseif ($isFlush) {
-                $this->judge = "フラッシュ";
+                $this->judge = "Flush";
             } elseif ($isStraight) {
-                $this->judge = "ストレート";
+                $this->judge = "Straight";
             } elseif (in_array(3, $counts)) {
-                $this->judge = "スリーカード";
-            } elseif (array_keys($counts, 2) !== null && count(array_keys($counts, 2)) === 2) {
-                $this->judge = "ツーペア";
+                $this->judge = "Three Card";
+            } elseif (count(array_keys($counts, 2)) === 2) {
+                $this->judge = "Two Pai";
             } elseif (in_array(2, $counts)) {
-                $this->judge = "ワンペア";
+                $this->judge = "One Pair";
             } else {
-                $this->judge = "ノーペア";
+                $this->judge = "None";
             }
         }
+        
     
         private function cardSort($hand) {
             usort($hand, function($a, $b) {
